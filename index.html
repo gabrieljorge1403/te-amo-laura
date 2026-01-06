@@ -5,31 +5,41 @@
     <title>Te amo, Laura</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Fonte estilo escrita à mão -->
+    <!-- Fonte escrita à mão -->
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 
     <style>
         body {
             margin: 0;
-            background-color: #000;
-            color: #fff;
+            background-color: black;
+            color: white;
             font-family: 'Pacifico', cursive;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
             text-align: center;
         }
 
+        h1, p, .distancia, iframe, footer {
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
         h1 {
-            margin-top: 40px;
-            font-size: 2.4em;
+            font-size: 2.5em;
+            margin-bottom: 20px;
         }
 
         p {
-            font-size: 1.5em;
-            margin: 20px;
+            font-size: 1.6em;
+            margin: 10px 20px;
         }
 
         .distancia {
-            margin-top: 20px;
             font-size: 1.3em;
+            margin-top: 20px;
         }
 
         iframe {
@@ -42,7 +52,7 @@
         }
 
         footer {
-            margin: 40px 0;
+            margin-top: 40px;
             font-size: 1.1em;
             opacity: 0.8;
         }
@@ -51,26 +61,36 @@
 
 <body>
 
-    <h1>Te amo, Laura ❤️</h1>
+    <h1 id="titulo">Te amo, Laura ❤️</h1>
 
-    <p>
+    <p id="frase">
         A cada metro de distância,<br>
         eu te amo mais.
     </p>
 
-    <div class="distancia">
+    <div class="distancia" id="distancia">
         🌍 Rio de Janeiro 🇧🇷 → Toulouse 🇫🇷 <br>
         Aproximadamente <strong>9.200 km</strong> nos separam.
     </div>
 
-    <iframe 
+    <iframe id="mapa"
         src="https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d23526874.26043862!2d-52.9740536!3d-8.3670315!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e0!4m5!1s0x9bd5a3b96e1b5f%3A0x4ef9d1d2d6a9b7b!2sRio%20de%20Janeiro%2C%20Brasil!3m2!1d-22.9068467!2d-43.1728965!4m5!1s0x12aebc63dbbba2df%3A0x5c5b8b7f5ed6f4a4!2sToulouse%2C%20Fran%C3%A7a!3m2!1d43.604652!2d1.444209"
         loading="lazy">
     </iframe>
 
-    <footer>
+    <footer id="rodape">
         Mesmo longe, você mora em mim.
     </footer>
+
+    <script>
+        window.onload = () => {
+            setTimeout(() => document.getElementById("titulo").style.opacity = 1, 800);
+            setTimeout(() => document.getElementById("frase").style.opacity = 1, 2200);
+            setTimeout(() => document.getElementById("distancia").style.opacity = 1, 3800);
+            setTimeout(() => document.getElementById("mapa").style.opacity = 1, 5500);
+            setTimeout(() => document.getElementById("rodape").style.opacity = 1, 7200);
+        };
+    </script>
 
 </body>
 </html>
