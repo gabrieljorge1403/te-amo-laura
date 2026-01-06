@@ -71,8 +71,9 @@
         margin-top: 20px;
     }
 
-    audio {
+    iframe {
         margin-top: 30px;
+        border-radius: 12px;
     }
 </style>
 </head>
@@ -100,11 +101,16 @@
 
     <p id="contador"></p>
 
-    <p>🎵 The Night We Met</p>
+    <p>🎵 Into a Fantasy — Alexander Rybak</p>
 
-    <audio id="musica" controls>
-        <source src="https://dl.dropboxusercontent.com/scl/fi/8o1m4jv9q7k8w8x3x7k7p/The-Night-We-Met.mp3?dl=1" type="audio/mpeg">
-    </audio>
+    <!-- MÚSICA (YouTube embed oculto) -->
+    <iframe
+        id="musica"
+        width="0"
+        height="0"
+        src=""
+        allow="autoplay">
+    </iframe>
 
 </div>
 
@@ -115,17 +121,16 @@
 /* ===== ENTRADA ===== */
 const entrada = document.getElementById("entrada");
 const conteudo = document.getElementById("conteudo");
-const musica = document.getElementById("musica");
+const iframeMusica = document.getElementById("musica");
 
 entrada.addEventListener("click", () => {
     entrada.style.display = "none";
     conteudo.style.display = "block";
-    musica.play();
-});
 
-/* ===== MÚSICA COMEÇA EM 0:30 ===== */
-musica.addEventListener("play", () => {
-    if (musica.currentTime < 30) musica.currentTime = 30;
+    // Música começa em 0:30
+    iframeMusica.src =
+        "https://www.youtube.com/embed/Y7lXxYhZKjU" +
+        "?start=30&autoplay=1&controls=0&rel=0&showinfo=0";
 });
 
 /* ===== MAPA 1: RIO → TOULOUSE ===== */
@@ -146,7 +151,7 @@ L.polyline([rio, toulouse], {
 }).addTo(mapa1);
 
 /* ===== MAPA 2: ITÁLIA ===== */
-const italia = [43.7696, 11.2558]; // Florença (exemplo romântico)
+const italia = [43.7696, 11.2558]; // Florença
 
 const mapa2 = L.map("mapaItalia").setView(italia, 5);
 
