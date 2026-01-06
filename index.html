@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Para Laura ❤️</title>
+
+  <!-- Fonte escrita à mão -->
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
+  <!-- Leaflet (mapa livre, sem Google) -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: white;
+      font-family: 'Pacifico', cursive;
+      text-align: center;
+    }
+
+    .enter {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    h1, h2 {
+      margin: 15px;
+    }
+
+    #map1, #map2 {
+      height: 400px;
+      margin: 20px;
+      border-radius: 12px;
+    }
+
+    .contador {
+      font-size: 28px;
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- TELA DE ENTRADA -->
+<div class="enter" id="enter">
+  <h1>❤️ Clique para entrar ❤️</h1>
+  <p>Uma surpresa feita com amor</p>
+</div>
+
+<!-- CONTEÚDO -->
+<div id="content" class="hidden">
+
+  <h1>Te amo, Laura ❤️</h1>
+  <h2>📍 Rio → Toulouse 📍</h2>
+  <p>Distância: <strong>8.720 km</strong></p>
+
+  <div id="map1"></div>
+
+  <p style="margin-top:40px">
+    Estamos separados, mas em breve estaremos aqui:
+  </p>
+
+  <div id="map2"></div>
+
+  <div class="contador" id="contador"></div>
+
+</div>
+
+<!-- MÚSICA -->
+<audio id="music" loop>
+  <!-- IMPORTANTE:
+       Coloque o arquivo MP3 na MESMA pasta do index.html
+       Nome sugerido: into_a_fantasy.mp3
+  -->
+  <source src="into_a_fantasy.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+  const enter = document.getElementById("enter");
+  const content = document.getElementById("content");
+  const music = document.getElementById("music");
+
+  enter.addEventListener("click", () => {
+    enter.classList.add("hidden");
+    content.classList.remove("hidden");
+    music.play();
+
+    iniciarMapas();
+    iniciarContador();
+  });
+
+  function iniciarMapas() {
+    // 📍 Coordenadas
+    const rio = [-22.9068, -43.1729];
+    const toulouse = [43.6047, 1.4442];
+    const italia = [41.9028, 12.4964];
+
+    // MAPA 1 - Rio -> Toulouse
+    const map1 = L.map("map1").setView([10, -20], 3);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "© OpenStreetMap"
+    }).addTo(map1);
+
+    L.marker(rio).addTo(map1).bindPopup("📍 Rio de Janeiro");
+    L.marker(toulouse).addTo(map1).bindPopup("📍 Toulouse");
+
+    L.polyline([rio, toulouse], {
+      color: "red",
+      weight: 4
+    }).addTo(map1);
+
+    // MAPA 2 - Itália
+    const map2 = L.map("map2").setView(italia, 5);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "© OpenStreetMap"
+    }).addTo(map2);
+
+    L.marker(italia).addTo(map2).bindPopup("📍 Itália ❤️");
+  }
+
+  function iniciarContador() {
+    const destino = new Date("2026-04-20T00:00:00");
+
+    setInterval(() => {
+      const agora = new Date();
+      const diff = destino - agora;
+
+      const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutos = Math.floor((diff / (1000 * 60)) % 60);
+      const segundos = Math.floor((diff / 1000) % 60);
+
+      document.getElementById("contador").innerHTML =
+        `⏳ ${dias} dias ${horas}h ${minutos}m ${segundos}s`;
+    }, 1000);
+  }
+</script>
+
+</body>
+</html>
