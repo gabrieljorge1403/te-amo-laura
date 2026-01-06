@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <title>Para Laura ❤️</title>
 
+<!-- Fonte escrita à mão -->
 <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
 <style>
     body {
@@ -24,116 +24,238 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        z-index: 9999;
+        z-index: 10;
+        font-size: 2.5em;
     }
 
-    #entrada h1 {
-        font-size: 3em;
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0% { opacity: 0.4; }
-        50% { opacity: 1; }
-        100% { opacity: 0.4; }
-    }
-
-    .container {
-        max-width: 900px;
-        margin: auto;
-        padding: 40px 20px 80px;
+    #conteudo {
         display: none;
+        padding: 30px;
     }
 
-    h1 { font-size: 3em; }
-    p { font-size: 1.5em; }
-
-    .mapa {
-        height: 400px;
-        border-radius: 15px;
-        margin: 30px 0;
+    h1, h2 {
+        margin: 20px 0;
     }
 
-    #contador {
+    iframe {
+        border-radius: 12px;
+        margin: 20px 0;
+    }
+
+    .contador {
         font-size: 2em;
-        margin-top: 20px;
+        margin: 20px 0;
+        color: #ff4d4d;
     }
 </style>
 </head>
 
 <body>
 
+<!-- Tela de entrada -->
 <div id="entrada">
-    <h1>Toque para entrar ❤️</h1>
+    Clique para entrar ❤️
 </div>
 
-<div class="container" id="conteudo">
+<!-- Música -->
+<audio id="musica" preload="auto">
+    <source src="https://dl.sndup.net/8k3m/Into%20A%20Fantasy%20-%20Alexander%20Rybak.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Conteúdo -->
+<div id="conteudo">
 
     <h1>Te amo, Laura ❤️</h1>
-    <p>A cada metro de distância, eu te amo mais.</p>
+    <h2>A cada metro de distância, eu te amo mais</h2>
 
-    <div id="mapaDistancia" class="mapa"></div>
+    <!-- MAPA RIO → TOULOUSE -->
+    <iframe
+        width="90%"
+        height="350"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=-54.5,-25.5,3.5,49.5&layer=mapnik&marker=-22.9068,-43.1729&marker=43.6047,1.4442&route=43.6047,1.4442;-22.9068,-43.1729"
+        style="border: 1px solid red;">
+    </iframe>
 
     <p>Estamos separados, mas em breve estaremos aqui:</p>
 
-    <div id="mapaItalia" class="mapa"></div>
+    <!-- MAPA ITÁLIA -->
+    <iframe
+        width="90%"
+        height="300"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=6.6,36.6,18.6,47.6&layer=mapnik&marker=43.7696,11.2558">
+    </iframe>
 
-    <p id="contador"></p>
-
-    <iframe id="musica" width="0" height="0" allow="autoplay"></iframe>
+    <div class="contador" id="contador"></div>
 
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script>
-/* ENTRADA */
+/* Clique inicial */
 document.getElementById("entrada").onclick = () => {
     document.getElementById("entrada").style.display = "none";
     document.getElementById("conteudo").style.display = "block";
-    document.getElementById("musica").src =
-        "https://www.youtube.com/embed/Y7lXxYhZKjU?start=30&autoplay=1&controls=0";
+
+    const musica = document.getElementById("musica");
+    musica.currentTime = 30;
+    musica.volume = 0.8;
+    musica.play();
 };
 
-/* MAPA 1 — RIO → TOULOUSE */
-const rio = [-22.9068, -43.1729];
-const toulouse = [43.6047, 1.4442];
+/* Contador regressivo */
+const dataAlvo = new Date("2026-04-20T00:00:00");
 
-const mapa1 = L.map("mapaDistancia").fitBounds([rio, toulouse]);
+function atualizarContador() {
+    const agora = new Date();
+    const diff = dataAlvo - agora;
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapa1);
+    if (diff <= 0) {
+        document.getElementById("contador").innerText =
+            "Chegou o dia ❤️";
+        return;
+    }
 
-// Pins
-L.marker(rio).addTo(mapa1).bindPopup("📍 Rio de Janeiro");
-L.marker(toulouse).addTo(mapa1).bindPopup("📍 Toulouse");
-
-// Linha vermelha
-L.polyline([rio, toulouse], {
-    color: "red",
-    weight: 4
-}).addTo(mapa1);
-
-/* MAPA 2 — ITÁLIA */
-const italia = [43.7696, 11.2558];
-const mapa2 = L.map("mapaItalia").setView(italia, 5);
-
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapa2);
-L.marker(italia).addTo(mapa2).bindPopup("📍 Em breve nós dois").openPopup();
-
-/* CONTADOR */
-const destino = new Date("2026-04-20T00:00:00").getTime();
-setInterval(() => {
-    const diff = destino - Date.now();
-    if (diff <= 0) return;
-
-    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const h = Math.floor(diff / (1000 * 60 * 60) % 24);
-    const m = Math.floor(diff / (1000 * 60) % 60);
-    const s = Math.floor(diff / 1000 % 60);
+    const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutos = Math.floor((diff / (1000 * 60)) % 60);
+    const segundos = Math.floor((diff / 1000) % 60);
 
     document.getElementById("contador").innerText =
-        `⏳ Faltam ${d} dias, ${h}h ${m}m ${s}s`;
-}, 1000);
+        `${dias} dias, ${horas}h ${minutos}m ${segundos}s`;
+}
+
+setInterval(atualizarContador, 1000);
+atualizarContador();
+</script>
+
+</body>
+</html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Para Laura ❤️</title>
+
+<!-- Fonte escrita à mão -->
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        background: black;
+        color: white;
+        font-family: 'Pacifico', cursive;
+        text-align: center;
+    }
+
+    #entrada {
+        position: fixed;
+        inset: 0;
+        background: black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        font-size: 2.5em;
+    }
+
+    #conteudo {
+        display: none;
+        padding: 30px;
+    }
+
+    h1, h2 {
+        margin: 20px 0;
+    }
+
+    iframe {
+        border-radius: 12px;
+        margin: 20px 0;
+    }
+
+    .contador {
+        font-size: 2em;
+        margin: 20px 0;
+        color: #ff4d4d;
+    }
+</style>
+</head>
+
+<body>
+
+<!-- Tela de entrada -->
+<div id="entrada">
+    Clique para entrar ❤️
+</div>
+
+<!-- Música -->
+<audio id="musica" preload="auto">
+    <source src="https://dl.sndup.net/8k3m/Into%20A%20Fantasy%20-%20Alexander%20Rybak.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Conteúdo -->
+<div id="conteudo">
+
+    <h1>Te amo, Laura ❤️</h1>
+    <h2>A cada metro de distância, eu te amo mais</h2>
+
+    <!-- MAPA RIO → TOULOUSE -->
+    <iframe
+        width="90%"
+        height="350"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=-54.5,-25.5,3.5,49.5&layer=mapnik&marker=-22.9068,-43.1729&marker=43.6047,1.4442&route=43.6047,1.4442;-22.9068,-43.1729"
+        style="border: 1px solid red;">
+    </iframe>
+
+    <p>Estamos separados, mas em breve estaremos aqui:</p>
+
+    <!-- MAPA ITÁLIA -->
+    <iframe
+        width="90%"
+        height="300"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=6.6,36.6,18.6,47.6&layer=mapnik&marker=43.7696,11.2558">
+    </iframe>
+
+    <div class="contador" id="contador"></div>
+
+</div>
+
+<script>
+/* Clique inicial */
+document.getElementById("entrada").onclick = () => {
+    document.getElementById("entrada").style.display = "none";
+    document.getElementById("conteudo").style.display = "block";
+
+    const musica = document.getElementById("musica");
+    musica.currentTime = 30;
+    musica.volume = 0.8;
+    musica.play();
+};
+
+/* Contador regressivo */
+const dataAlvo = new Date("2026-04-20T00:00:00");
+
+function atualizarContador() {
+    const agora = new Date();
+    const diff = dataAlvo - agora;
+
+    if (diff <= 0) {
+        document.getElementById("contador").innerText =
+            "Chegou o dia ❤️";
+        return;
+    }
+
+    const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutos = Math.floor((diff / (1000 * 60)) % 60);
+    const segundos = Math.floor((diff / 1000) % 60);
+
+    document.getElementById("contador").innerText =
+        `${dias} dias, ${horas}h ${minutos}m ${segundos}s`;
+}
+
+setInterval(atualizarContador, 1000);
+atualizarContador();
 </script>
 
 </body>
