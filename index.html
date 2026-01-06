@@ -4,10 +4,7 @@
 <meta charset="UTF-8">
 <title>Para Laura ❤️</title>
 
-<!-- Fonte escrita à mão -->
 <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-
-<!-- Leaflet (mapas) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
 <style>
@@ -17,10 +14,8 @@
         color: white;
         font-family: 'Pacifico', cursive;
         text-align: center;
-        overflow-x: hidden;
     }
 
-    /* Tela de entrada */
     #entrada {
         position: fixed;
         inset: 0;
@@ -50,15 +45,8 @@
         display: none;
     }
 
-    h1 {
-        font-size: 3em;
-        margin-top: 20px;
-    }
-
-    p {
-        font-size: 1.5em;
-        margin: 20px;
-    }
+    h1 { font-size: 3em; }
+    p { font-size: 1.5em; }
 
     .mapa {
         height: 400px;
@@ -70,17 +58,11 @@
         font-size: 2em;
         margin-top: 20px;
     }
-
-    iframe {
-        margin-top: 30px;
-        border-radius: 12px;
-    }
 </style>
 </head>
 
 <body>
 
-<!-- TELA DE SURPRESA -->
 <div id="entrada">
     <h1>Toque para entrar ❤️</h1>
 </div>
@@ -88,101 +70,69 @@
 <div class="container" id="conteudo">
 
     <h1>Te amo, Laura ❤️</h1>
-
     <p>A cada metro de distância, eu te amo mais.</p>
 
-    <!-- MAPA 1 -->
     <div id="mapaDistancia" class="mapa"></div>
 
     <p>Estamos separados, mas em breve estaremos aqui:</p>
 
-    <!-- MAPA 2 -->
     <div id="mapaItalia" class="mapa"></div>
 
     <p id="contador"></p>
 
-    <p>🎵 Into a Fantasy — Alexander Rybak</p>
-
-    <!-- MÚSICA (YouTube embed oculto) -->
-    <iframe
-        id="musica"
-        width="0"
-        height="0"
-        src=""
-        allow="autoplay">
-    </iframe>
+    <iframe id="musica" width="0" height="0" allow="autoplay"></iframe>
 
 </div>
 
-<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-/* ===== ENTRADA ===== */
-const entrada = document.getElementById("entrada");
-const conteudo = document.getElementById("conteudo");
-const iframeMusica = document.getElementById("musica");
+/* ENTRADA */
+document.getElementById("entrada").onclick = () => {
+    document.getElementById("entrada").style.display = "none";
+    document.getElementById("conteudo").style.display = "block";
+    document.getElementById("musica").src =
+        "https://www.youtube.com/embed/Y7lXxYhZKjU?start=30&autoplay=1&controls=0";
+};
 
-entrada.addEventListener("click", () => {
-    entrada.style.display = "none";
-    conteudo.style.display = "block";
-
-    // Música começa em 0:30
-    iframeMusica.src =
-        "https://www.youtube.com/embed/Y7lXxYhZKjU" +
-        "?start=30&autoplay=1&controls=0&rel=0&showinfo=0";
-});
-
-/* ===== MAPA 1: RIO → TOULOUSE ===== */
+/* MAPA 1 — RIO → TOULOUSE */
 const rio = [-22.9068, -43.1729];
 const toulouse = [43.6047, 1.4442];
 
-const mapa1 = L.map("mapaDistancia", { zoomControl: false })
-    .fitBounds([rio, toulouse]);
+const mapa1 = L.map("mapaDistancia").fitBounds([rio, toulouse]);
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "© OpenStreetMap"
-}).addTo(mapa1);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapa1);
 
+// Pins
+L.marker(rio).addTo(mapa1).bindPopup("📍 Rio de Janeiro");
+L.marker(toulouse).addTo(mapa1).bindPopup("📍 Toulouse");
+
+// Linha vermelha
 L.polyline([rio, toulouse], {
-    color: "white",
-    weight: 3,
-    dashArray: "8,6"
+    color: "red",
+    weight: 4
 }).addTo(mapa1);
 
-/* ===== MAPA 2: ITÁLIA ===== */
-const italia = [43.7696, 11.2558]; // Florença
-
+/* MAPA 2 — ITÁLIA */
+const italia = [43.7696, 11.2558];
 const mapa2 = L.map("mapaItalia").setView(italia, 5);
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "© OpenStreetMap"
-}).addTo(mapa2);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapa2);
+L.marker(italia).addTo(mapa2).bindPopup("📍 Em breve nós dois").openPopup();
 
-L.marker(italia).addTo(mapa2)
-    .bindPopup("📍 Em breve nós dois")
-    .openPopup();
-
-/* ===== CONTADOR ===== */
+/* CONTADOR */
 const destino = new Date("2026-04-20T00:00:00").getTime();
-const contador = document.getElementById("contador");
-
 setInterval(() => {
-    const agora = new Date().getTime();
-    const diff = destino - agora;
+    const diff = destino - Date.now();
+    if (diff <= 0) return;
 
-    if (diff <= 0) {
-        contador.innerHTML = "💞 Chegou o nosso momento 💞";
-        return;
-    }
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor(diff / (1000 * 60 * 60) % 24);
+    const m = Math.floor(diff / (1000 * 60) % 60);
+    const s = Math.floor(diff / 1000 % 60);
 
-    const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const minutos = Math.floor((diff / (1000 * 60)) % 60);
-    const segundos = Math.floor((diff / 1000) % 60);
-
-    contador.innerHTML =
-        `⏳ Faltam ${dias} dias, ${horas}h ${minutos}m ${segundos}s`;
+    document.getElementById("contador").innerText =
+        `⏳ Faltam ${d} dias, ${h}h ${m}m ${s}s`;
 }, 1000);
 </script>
 
